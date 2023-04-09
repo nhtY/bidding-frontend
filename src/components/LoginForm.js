@@ -28,7 +28,7 @@ function LoginForm() {
                                                 <Form.Label className="text-center">
                                                     Username
                                                 </Form.Label>
-                                                <Form.Control type="text" name="username" className="bg-dark text-white" placeholder="Enter your username" />
+                                                <Form.Control type="text" name="username" className="bg-dark text-white" placeholder="Enter your username" required />
                                             </Form.Group>
 
                                             <Form.Group
@@ -36,15 +36,14 @@ function LoginForm() {
                                                 controlId="formBasicPassword"
                                             >
                                                 <Form.Label>Password</Form.Label>
-                                                <Form.Control name="password" className="bg-dark text-white" type="password" placeholder="Enter your password" />
+                                                <Form.Control name="password" className="bg-dark text-white" type="password" placeholder="Enter your password" required />
                                             </Form.Group>
 
                                             <div className="d-flex justify-content-center">
-                                                <Link to={"/register"} className="col-6">
-                                                    <Button className="container-fluid" variant="success" type="submit">
+
+                                                    <Button className="col-6" variant="success" type="submit">
                                                         Login
                                                     </Button>
-                                                </Link>
 
                                             </div>
                                         </Form>

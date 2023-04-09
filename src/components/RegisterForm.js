@@ -25,7 +25,7 @@ function RegisterFrom() {
                                                         <Form.Label className="text-center">
                                                             Username
                                                         </Form.Label>
-                                                        <Form.Control className="bg-dark text-white" placeholder="Enter your first name" />
+                                                        <Form.Control className="bg-dark text-white" placeholder="Enter your first name" required />
                                                     </Form.Group>
 
                                                 </Col>
@@ -35,7 +35,7 @@ function RegisterFrom() {
                                                         <Form.Label className="text-center">
                                                             Username
                                                         </Form.Label>
-                                                        <Form.Control className="bg-dark text-white" placeholder="Enter your last name" />
+                                                        <Form.Control className="bg-dark text-white" placeholder="Enter your last name" required />
                                                     </Form.Group>
                                                 </Col>
                                             </Row>
@@ -44,7 +44,7 @@ function RegisterFrom() {
                                                 <Form.Label className="text-center">
                                                     Username
                                                 </Form.Label>
-                                                <Form.Control className="bg-dark text-white" placeholder="Enter your username" />
+                                                <Form.Control className="bg-dark text-white" placeholder="Enter your username" required />
                                             </Form.Group>
 
                                             <Form.Group
@@ -52,7 +52,7 @@ function RegisterFrom() {
                                                 controlId="formBasicPassword"
                                             >
                                                 <Form.Label>Password</Form.Label>
-                                                <Form.Control className="bg-dark text-white" type="password" placeholder="Enter a password" />
+                                                <Form.Control className="bg-dark text-white" type="password" placeholder="Enter a password" required />
                                             </Form.Group>
 
                                             <Form.Group
@@ -60,7 +60,7 @@ function RegisterFrom() {
                                                 controlId="formBasicPasswordAgain"
                                             >
                                                 <Form.Label>Password</Form.Label>
-                                                <Form.Control className="bg-dark text-white" type="password" placeholder="Enter the password again" />
+                                                <Form.Control className="bg-dark text-white" type="password" placeholder="Enter the password again" required />
                                             </Form.Group>
 
                                             <div className="d-flex justify-content-center">
