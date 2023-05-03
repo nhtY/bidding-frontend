@@ -23,7 +23,7 @@ function RegisterFrom() {
                                                 <Col>
                                                     <Form.Group className="mb-3" controlId="formFirstName">
                                                         <Form.Label className="text-center">
-                                                            Username
+                                                            First Name
                                                         </Form.Label>
                                                         <Form.Control className="bg-dark text-white" placeholder="Enter your first name" required />
                                                     </Form.Group>
@@ -33,7 +33,7 @@ function RegisterFrom() {
                                                 <Col>
                                                     <Form.Group className="mb-3" controlId="formLastName">
                                                         <Form.Label className="text-center">
-                                                            Username
+                                                            Last Name
                                                         </Form.Label>
                                                         <Form.Control className="bg-dark text-white" placeholder="Enter your last name" required />
                                                     </Form.Group>

@@ -9,8 +9,8 @@ function NavigationBar() {
         <Navbar bg="dark" variant="dark">
             <Container>
                 <Link to={""} className="navbar-brand">
-                    <img src={logo} alt="brand_image" width="45" height="25" className="rounded-1 img-fluid" />
-                    Kartaca Bidding
+                    <img src={logo} alt="brand_image" width="45" height="25" className="rounded-1 img-fluid m-1" />
+                    Bidding
                 </Link>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
