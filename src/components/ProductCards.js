@@ -10,7 +10,7 @@ function ProductCards() {
         <Row xs={1} md={3} className="justify-content-md-center">
 
             {Array.from({ length: 4 }).map((_, idx) => (
-                <Col>
+                <Col key={idx}>
                     <Card className="bg-dark text-white m-2 shadow">
                         <Card.Img variant="top" src={img_url} />
                         <Card.Body>

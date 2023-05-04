@@ -1,89 +1,76 @@
-import Form from 'react-bootstrap/Form';
-import {Button, Card, Col, Container, Row} from "react-bootstrap";
-import {Link} from "react-router-dom";
-import React from "react";
+
+import React, {useState} from "react";
+import UserInfoForm from "./UserInfoForm";
+import AddressInfoForm from "./AddressInfoForm";
+import PaymentInfoForm from "./PaymentInfoForm";
+import ConfirmRegister from "./ConfirmRegister";
 
 function RegisterFrom() {
-    return (
+    const initialData = {
+        firstName: '',
+        lastName: '',
+        username: '',
+        password: '',
+        passwordRepeat: '',
+        houseNumber: '',
+        street: '',
+        city: '',
+        postalCode: '',
+        country: '',
+        ccNumber: '',
+        ccExpiration: '',
+        CVV: ''
+    }
 
-        <div>
-            <Container>
-                <Row className="vh-50 d-flex justify-content-center align-items-center">
-                    <Col md={8} lg={6} xs={12}>
-                        <div className="bg-dark border border-3 border-secondary"></div>
-                        <Card className="bg-dark text-white shadow">
-                            <Card.Body>
-                                <div className="mb-3 mt-md-4">
-                                    <h2 className="fw-bold mb-0 text-uppercase ">Register</h2>
-                                    <p className=" mb-2">Please provide required information to register.</p>
-                                    <div className="mb-3">
-                                        <Form>
+    const formNames = ['personal', 'address', 'payment']
 
-                                            <Row>
-                                                <Col>
-                                                    <Form.Group className="mb-3" controlId="formFirstName">
-                                                        <Form.Label className="text-center">
-                                                            First Name
-                                                        </Form.Label>
-                                                        <Form.Control className="bg-dark text-white" placeholder="Enter your first name" required />
-                                                    </Form.Group>
+    const initialValid = {personal: false, address: false, payment: false}
 
-                                                </Col>
+    const [currentStep, setStep] = useState(1);
+    const [isValid, setValid] = useState(initialValid);
+    const [data, setData] = useState(initialData);
 
-                                                <Col>
-                                                    <Form.Group className="mb-3" controlId="formLastName">
-                                                        <Form.Label className="text-center">
-                                                            Last Name
-                                                        </Form.Label>
-                                                        <Form.Control className="bg-dark text-white" placeholder="Enter your last name" required />
-                                                    </Form.Group>
-                                                </Col>
-                                            </Row>
+    function handleValid(formName) {
+        setValid({...isValid, [formName]: true});
+        handleNext();
+    }
 
-                                            <Form.Group className="mb-3" controlId="formUsername">
-                                                <Form.Label className="text-center">
-                                                    Username
-                                                </Form.Label>
-                                                <Form.Control className="bg-dark text-white" placeholder="Enter your username" required />
-                                            </Form.Group>
+    // When 'Next' is clicked, check if inputs are valid. If valid go next form
+    const handleChange = (e) => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    };
 
-                                            <Form.Group
-                                                className="mb-3"
-                                                controlId="formBasicPassword"
-                                            >
-                                                <Form.Label>Password</Form.Label>
-                                                <Form.Control className="bg-dark text-white" type="password" placeholder="Enter a password" required />
-                                            </Form.Group>
+    function handleNext() {
+        if (isValid[formNames[currentStep-1]]){
+            setStep(currentStep + 1);
+            console.log(currentStep);
+        }
+    }
 
-                                            <Form.Group
-                                                className="mb-3"
-                                                controlId="formBasicPasswordAgain"
-                                            >
-                                                <Form.Label>Password</Form.Label>
-                                                <Form.Control className="bg-dark text-white" type="password" placeholder="Enter the password again" required />
-                                            </Form.Group>
+    function handlePrevious() {
+        setStep(currentStep - 1);
+    }
 
-                                            <div className="d-flex justify-content-center">
-                                                <Button className="col-6" variant="success" type="submit">
-                                                    Register
-                                                </Button>
-                                            </div>
-                                        </Form>
-                                        <div className="mt-3">
-                                            <p className="mb-0  text-center">
-                                                Do you have an account?{" "}
-                                                <Link to={"/login"} className="nav-link fw-bold">Sign In</Link>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
-        </div>
-    );
+    function register() {
+
+    }
+
+    switch (currentStep) {
+        case 1:
+            return <UserInfoForm currentStep={currentStep} data={data} handleChange={handleChange}
+                                 handleValid={handleValid} />;
+        case 2:
+            return <AddressInfoForm currentStep={currentStep} data={data} handleChange={handleChange}
+                                    handleValid={handleValid} handlePrev={handlePrevious}/>;
+        case 3:
+            return <PaymentInfoForm currentStep={currentStep} data={data} handleChange={handleChange}
+                                    handleValid={handleValid} handlePrev={handlePrevious} />;
+        case 4:
+            return <ConfirmRegister currentStep={currentStep} data={data} handlePrev={handlePrevious}
+                                    handleRegister={register} />;
+        default:
+            return <h1>No Step here</h1>;
+    }
 }
 
 export default RegisterFrom;
