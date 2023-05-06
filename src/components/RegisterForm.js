@@ -42,13 +42,14 @@ function RegisterFrom() {
     };
 
     function handleNext(currentForm) {
-        handleValid(currentForm);
-        console.log("handle next is working for ", formNames[currentStep-1])
-        console.log(isValid[formNames[currentStep-1]]);
-        if (isValid[formNames[currentStep-1]]){
-            setStep(currentStep + 1);
-            console.log(currentStep);
-        }
+        setStep(currentStep + 1);
+        // handleValid(currentForm);
+        // console.log("handle next is working for ", formNames[currentStep-1])
+        // console.log(isValid[formNames[currentStep-1]]);
+        // if (isValid[formNames[currentStep-1]]){
+        //     setStep(currentStep + 1);
+        //     console.log(currentStep);
+        // }
     }
 
     function handlePrevious() {

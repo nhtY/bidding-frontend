@@ -7,8 +7,11 @@ import React from "react";
 function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNext }) {
 
     let validation = {
-        first_name: data.firstName.length > 3,
-        last_name: data.lastName.length > 3,
+        first_name: data.firstName.length >= 3,
+        last_name: data.lastName.length >= 3,
+        username: data.username.length >= 3,
+        password: data.password.length >= 3,
+        passwordRepeat: data.password === data.passwordRepeat
     }
     function  next(){
         console.log(checkValid());
@@ -18,8 +21,8 @@ function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNex
     }
 
     function checkValid() {
-        return data.firstName.length >= 3 && data.lastName >= 3 && data.username >= 3
-            && data.password >= 3 && data.password === data.passwordRepeat;
+        return data.firstName.length >= 3 && data.lastName.length >= 3 && data.username.length >= 3
+            && data.password.length >= 3 && data.password === data.passwordRepeat;
     }
 
     const handleSubmit = (event) => {
@@ -70,7 +73,10 @@ function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNex
                                                         Last Name
                                                     </Form.Label>
                                                     <Form.Control name="lastName" className="bg-dark text-white" placeholder="Enter your last name"
-                                                                  value={data.lastName} onChange={handleChange} required />
+                                                                  value={data.lastName} onChange={handleChange} required
+                                                                  isValid={validation.last_name}
+                                                                  isInvalid={!validation.last_name}
+                                                    />
                                                 </Form.Group>
                                             </Col>
                                         </Row>
@@ -80,7 +86,10 @@ function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNex
                                                 Username
                                             </Form.Label>
                                             <Form.Control name="username" className="bg-dark text-white" placeholder="Enter your username"
-                                                          value={data.username} onChange={handleChange} required />
+                                                          value={data.username} onChange={handleChange} required
+                                                          isValid={validation.username}
+                                                          isInvalid={!validation.username}
+                                            />
                                         </Form.Group>
 
                                         <Form.Group
@@ -89,7 +98,10 @@ function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNex
                                         >
                                             <Form.Label>Password</Form.Label>
                                             <Form.Control name="password" className="bg-dark text-white" type="password" placeholder="Enter a password"
-                                                          value={data.password} onChange={handleChange} required />
+                                                          value={data.password} onChange={handleChange} required
+                                                          isValid={validation.password}
+                                                          isInvalid={!validation.password}
+                                            />
                                         </Form.Group>
 
                                         <Form.Group
@@ -98,7 +110,10 @@ function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNex
                                         >
                                             <Form.Label>Password</Form.Label>
                                             <Form.Control name="passwordRepeat" className="bg-dark text-white" type="password" placeholder="Enter the password again"
-                                                          value={data.passwordRepeat} onChange={handleChange} required />
+                                                          value={data.passwordRepeat} onChange={handleChange} required
+                                                          isValid={validation.passwordRepeat}
+                                                          isInvalid={!validation.passwordRepeat}
+                                            />
                                         </Form.Group>
 
                                         <div className="d-flex justify-content-end">

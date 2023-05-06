@@ -6,6 +6,27 @@ import React from "react";
 
 function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handlePrev, handleNext}) {
 
+    let validation = {
+        cc_number: data.ccNumber.length >= 10 && isNumeric(data.ccNumber),
+        expiration: data.ccExpiration.length >= 3,
+        cvv: data.CVV.length >= 3 && isNumeric(data.CVV)
+    }
+
+    function  next(){
+        console.log(checkValid());
+        if (checkValid()){
+            handleNext();
+        }
+    }
+
+    function checkValid() {
+        return data.ccNumber.length >= 10 && isNumeric(data.ccNumber) && data.ccExpiration.length >= 3
+            && data.CVV.length >= 3 && isNumeric(data.CVV);
+    }
+
+    function isNumeric(value) {
+        return /^\d+$/.test(value);
+    }
     const handleSubmit = (event) => {
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
@@ -29,7 +50,7 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                 <h2 className="fw-bold mb-0 text-uppercase ">Payment Info Form</h2>
                                 <p className=" mb-2">Please provide required payment information to register.</p>
                                 <div className="mb-3">
-                                    <Form noValidate validated={true} onSubmit={handleSubmit}>
+                                    <Form noValidate>
 
                                         <Row>
                                             <Form.Group className="mb-3" controlId="ccNumber">
@@ -37,7 +58,10 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                     Credit Card Number
                                                 </Form.Label>
                                                 <Form.Control name="ccNumber" className="bg-dark text-white"
-                                                              value={data.ccNumber} onChange={handleChange} required />
+                                                              value={data.ccNumber} onChange={handleChange} required
+                                                              isValid={validation.cc_number}
+                                                              isInvalid={!validation.cc_number}
+                                                />
                                             </Form.Group>
                                         </Row>
 
@@ -47,7 +71,10 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                     Expiration Date (MM/YY)
                                                 </Form.Label>
                                                 <Form.Control name="ccExpiration" className="bg-dark text-white" placeholder="ex: 04/25"
-                                                              value={data.ccExpiration} onChange={handleChange} required />
+                                                              value={data.ccExpiration} onChange={handleChange} required
+                                                              isValid={validation.expiration}
+                                                              isInvalid={!validation.expiration}
+                                                />
                                             </Form.Group>
                                         </Row>
 
@@ -57,7 +84,10 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                     CVV
                                                 </Form.Label>
                                                 <Form.Control name="CVV" className="bg-dark text-white" placeholder="ex: 123"
-                                                              value={data.CVV} onChange={handleChange} required />
+                                                              value={data.CVV} onChange={handleChange} required
+                                                              isValid={validation.cvv}
+                                                              isInvalid={!validation.cvv}
+                                                />
                                             </Form.Group>
                                         </Row>
 
@@ -66,7 +96,7 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                             <Button className="col-md-4 col-sm-3" variant="outline-info" onClick={handlePrev}>
                                                 Previous
                                             </Button>
-                                            <Button className="col-md-4 col-sm-3" variant="success" type="submit">
+                                            <Button className="col-md-4 col-sm-3" variant="success" onClick={next}>
                                                 Next
                                             </Button>
                                         </div>

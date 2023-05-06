@@ -6,8 +6,31 @@ import React from "react";
 
 function AddressInfoForm({ currentStep, data, handleChange, handleValid, handlePrev, handleNext }) {
 
+    let validation = {
+        house_number: data.houseNumber.length >= 0 && isNumeric(data.houseNumber),
+        street: data.street.length >= 3,
+        city: data.city.length >= 3,
+        postal_code: data.postalCode.length >=3 && isNumeric(data.postalCode),
+        country: data.country.length >= 3
+    }
+
     function  next(){
-        handleNext('address');
+        console.log(checkValid());
+        if (checkValid()){
+            handleNext();
+        }
+    }
+
+    function checkValid() {
+        return  data.houseNumber.length >= 0 && isNumeric(data.houseNumber)
+            && data.street.length >= 3
+            && data.city.length >= 3
+            && data.postalCode.length >=3 && isNumeric(data.postalCode)
+            && data.country.length >= 3;
+    }
+
+    function isNumeric(value) {
+        return /^\d+$/.test(value);
     }
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -32,7 +55,7 @@ function AddressInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                 <h2 className="fw-bold mb-0 text-uppercase ">Address Info Form</h2>
                                 <p className=" mb-2">Please provide required address information to register.</p>
                                 <div className="mb-3">
-                                    <Form noValidate validated={true} onSubmit={handleSubmit}>
+                                    <Form noValidate>
 
                                         <Row>
                                             <Col>
@@ -41,7 +64,10 @@ function AddressInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                         House Number
                                                     </Form.Label>
                                                     <Form.Control name="houseNumber" className="bg-dark text-white" placeholder="3"
-                                                                  value={data.houseNumber} onChange={handleChange} required />
+                                                                  value={data.houseNumber} onChange={handleChange} required
+                                                                  isValid={validation.house_number}
+                                                                  isInvalid={!validation.house_number}
+                                                    />
                                                 </Form.Group>
 
                                             </Col>
@@ -52,7 +78,10 @@ function AddressInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                         Street
                                                     </Form.Label>
                                                     <Form.Control name="street" className="bg-dark text-white" placeholder="ex: Baker St."
-                                                                  value={data.street}  onChange={handleChange} required />
+                                                                  value={data.street}  onChange={handleChange} required
+                                                                  isValid={validation.street}
+                                                                  isInvalid={!validation.street}
+                                                    />
                                                 </Form.Group>
                                             </Col>
 
@@ -62,7 +91,10 @@ function AddressInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                         City
                                                     </Form.Label>
                                                     <Form.Control name="city" className="bg-dark text-white" placeholder="London"
-                                                                  value={data.city}  onChange={handleChange} required />
+                                                                  value={data.city}  onChange={handleChange} required
+                                                                  isValid={validation.city}
+                                                                  isInvalid={!validation.city}
+                                                    />
                                                 </Form.Group>
 
                                             </Col>
@@ -76,7 +108,10 @@ function AddressInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                         Postal Code
                                                     </Form.Label>
                                                     <Form.Control name="postalCode" className="bg-dark text-white" placeholder="380099"
-                                                                  value={data.postalCode}  onChange={handleChange} required />
+                                                                  value={data.postalCode}  onChange={handleChange} required
+                                                                  isValid={validation.postal_code}
+                                                                  isInvalid={!validation.postal_code}
+                                                    />
                                                 </Form.Group>
                                             </Col>
 
@@ -86,7 +121,10 @@ function AddressInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                         Country
                                                     </Form.Label>
                                                     <Form.Control name="country" className="bg-dark text-white" placeholder="England"
-                                                                  value={data.country}  onChange={handleChange} required />
+                                                                  value={data.country}  onChange={handleChange} required
+                                                                  isValid={validation.country}
+                                                                  isInvalid={!validation.country}
+                                                    />
                                                 </Form.Group>
                                             </Col>
                                         </Row>
@@ -96,7 +134,7 @@ function AddressInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                             <Button className="col-md-4 col-sm-3" variant="outline-info" onClick={handlePrev}>
                                                 Previous
                                             </Button>
-                                            <Button className="col-md-4 col-sm-3" variant="success" type="submit">
+                                            <Button className="col-md-4 col-sm-3" variant="success" onClick={next}>
                                                 Next
                                             </Button>
                                         </div>
