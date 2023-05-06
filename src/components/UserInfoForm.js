@@ -6,14 +6,34 @@ import React from "react";
 
 function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNext }) {
 
+    let validation = {
+        first_name: data.firstName.length > 3,
+        last_name: data.lastName.length > 3,
+    }
+    function  next(){
+        console.log(checkValid());
+        if (checkValid()){
+            handleNext();
+        }
+    }
+
+    function checkValid() {
+        return data.firstName.length >= 3 && data.lastName >= 3 && data.username >= 3
+            && data.password >= 3 && data.password === data.passwordRepeat;
+    }
+
     const handleSubmit = (event) => {
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
+            console.log("NOT valid")
             event.preventDefault();
             event.stopPropagation();
         }else {
+            console.log("valid")
             event.preventDefault();
-            handleValid('personal');
+            event.stopPropagation();
+            //handleValid('personal');
+            handleNext('personal');
         }
     }
     return (
@@ -27,7 +47,7 @@ function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNex
                                 <h2 className="fw-bold mb-0 text-uppercase ">Personal Info Form</h2>
                                 <p className=" mb-2">Please provide required personal information to register.</p>
                                 <div className="mb-3">
-                                    <Form noValidate validated={true} onSubmit={handleSubmit}>
+                                    <Form noValidate>
 
                                         <Row>
                                             <Col>
@@ -36,7 +56,10 @@ function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNex
                                                         First Name
                                                     </Form.Label>
                                                     <Form.Control name="firstName" className="bg-dark text-white" placeholder="Enter your first name"
-                                                                  value={data.firstName}  onChange={handleChange} required />
+                                                                  value={data.firstName}  onChange={handleChange} required
+                                                                  isValid={validation.first_name}
+                                                                  isInvalid={!validation.first_name}
+                                                    />
                                                 </Form.Group>
 
                                             </Col>
@@ -79,7 +102,7 @@ function UserInfoForm({ currentStep, data,  handleChange, handleValid, handleNex
                                         </Form.Group>
 
                                         <div className="d-flex justify-content-end">
-                                            <Button className="col-6" variant="success" type="submit">
+                                            <Button className="col-6" variant="success" onClick={next}>
                                                 Next
                                             </Button>
                                         </div>

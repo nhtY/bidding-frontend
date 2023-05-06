@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import React from "react";
 
 
-function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handlePrev}) {
+function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handlePrev, handleNext}) {
 
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -14,7 +14,7 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
         }else {
             event.preventDefault();
             event.stopPropagation();
-            handleValid('payment');
+            handleValid('payment').then(handleNext);
         }
     }
 

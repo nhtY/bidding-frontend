@@ -6,6 +6,9 @@ import React from "react";
 
 function AddressInfoForm({ currentStep, data, handleChange, handleValid, handlePrev, handleNext }) {
 
+    function  next(){
+        handleNext('address');
+    }
     const handleSubmit = (event) => {
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
@@ -14,7 +17,7 @@ function AddressInfoForm({ currentStep, data, handleChange, handleValid, handleP
         }else {
             event.preventDefault();
             event.stopPropagation();
-            handleValid('address');
+            handleNext('address');
         }
     }
 

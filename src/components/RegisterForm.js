@@ -1,5 +1,5 @@
 
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import UserInfoForm from "./UserInfoForm";
 import AddressInfoForm from "./AddressInfoForm";
 import PaymentInfoForm from "./PaymentInfoForm";
@@ -31,8 +31,9 @@ function RegisterFrom() {
     const [data, setData] = useState(initialData);
 
     function handleValid(formName) {
+        console.log("handle valid is working..");
         setValid({...isValid, [formName]: true});
-        handleNext();
+        //handleNext();
     }
 
     // When 'Next' is clicked, check if inputs are valid. If valid go next form
@@ -40,7 +41,10 @@ function RegisterFrom() {
         setData({ ...data, [e.target.name]: e.target.value });
     };
 
-    function handleNext() {
+    function handleNext(currentForm) {
+        handleValid(currentForm);
+        console.log("handle next is working for ", formNames[currentStep-1])
+        console.log(isValid[formNames[currentStep-1]]);
         if (isValid[formNames[currentStep-1]]){
             setStep(currentStep + 1);
             console.log(currentStep);
@@ -58,13 +62,13 @@ function RegisterFrom() {
     switch (currentStep) {
         case 1:
             return <UserInfoForm currentStep={currentStep} data={data} handleChange={handleChange}
-                                 handleValid={handleValid} />;
+                                 handleValid={handleValid} handleNext={handleNext} />;
         case 2:
             return <AddressInfoForm currentStep={currentStep} data={data} handleChange={handleChange}
-                                    handleValid={handleValid} handlePrev={handlePrevious}/>;
+                                    handleValid={handleValid} handlePrev={handlePrevious} handleNext={handleNext} />;
         case 3:
             return <PaymentInfoForm currentStep={currentStep} data={data} handleChange={handleChange}
-                                    handleValid={handleValid} handlePrev={handlePrevious} />;
+                                    handleValid={handleValid} handlePrev={handlePrevious} handleNext={handleNext} />;
         case 4:
             return <ConfirmRegister currentStep={currentStep} data={data} handlePrev={handlePrevious}
                                     handleRegister={register} />;
