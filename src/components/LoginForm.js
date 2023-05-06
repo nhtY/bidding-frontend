@@ -1,13 +1,49 @@
 import {Form, Container, Row, Col, Card, Button} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 import React, {useState} from "react";
+import authService from "../service/authService";
+import LoginErrorMessage from "./LoginErrorMessage";
+import { useHistory } from 'react-router-dom';
 
 function LoginForm() {
-    const [username, setUsername] = useState(''); // username = '' initially
-    const [password, setPassword] = useState(''); // password = '' initially
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isShow, setShow] = useState(false);
 
-    function submitForm() {
+    function handleChange(e) {
+        if (e.target.name === "username") {
+            setUsername(e.target.value);
+        }
 
+        if (e.target.name === "password") {
+            setPassword(e.target.value);
+        }
+    }
+
+    const handleCloseModal = () => {
+        setErrorMessage("");
+        setShow(false);
+    };
+    function submitForm(event) {
+        event.preventDefault();
+
+        authService.login(username, password)
+            .then(response => {
+                console.log("Login successful. User ID:", response.userID);
+
+                // Get the history object from react-router-dom
+                const history = useHistory();
+
+                // Navigate to the home page
+                history.push('/');
+            })
+            .catch(error => {
+                console.error("Login failed with status code:", error.status);
+                // Display an error message to the user using a modal or another UI element
+                setShow(true);
+                setErrorMessage("Invalid username or password. Please try again.");
+            });
     }
 
     return (
@@ -28,7 +64,8 @@ function LoginForm() {
                                                 <Form.Label className="text-center">
                                                     Username
                                                 </Form.Label>
-                                                <Form.Control type="text" name="username" className="bg-dark text-white" placeholder="Enter your username" required />
+                                                <Form.Control type="text" name="username" className="bg-dark text-white"
+                                                              onChange={handleChange} placeholder="Enter your username" required />
                                             </Form.Group>
 
                                             <Form.Group
@@ -36,7 +73,8 @@ function LoginForm() {
                                                 controlId="formBasicPassword"
                                             >
                                                 <Form.Label>Password</Form.Label>
-                                                <Form.Control name="password" className="bg-dark text-white" type="password" placeholder="Enter your password" required />
+                                                <Form.Control name="password" className="bg-dark text-white" type="password"
+                                                              onChange={handleChange} placeholder="Enter your password" required />
                                             </Form.Group>
 
                                             <div className="d-flex justify-content-center">
@@ -59,6 +97,7 @@ function LoginForm() {
                         </Card>
                     </Col>
                 </Row>
+                <LoginErrorMessage message={errorMessage} isShow={isShow} handleCloseModal={handleCloseModal} />
             </Container>
         </div>
     );

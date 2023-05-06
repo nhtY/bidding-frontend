@@ -7,9 +7,9 @@ import React from "react";
 function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handlePrev, handleNext}) {
 
     let validation = {
-        cc_number: data.ccNumber.length >= 10 && isNumeric(data.ccNumber),
-        expiration: data.ccExpiration.length >= 3,
-        cvv: data.CVV.length >= 3 && isNumeric(data.CVV)
+        cc_number: data.paymentInfo.ccNumber.length >= 10 && isNumeric(data.paymentInfo.ccNumber),
+        expiration: data.paymentInfo.ccExpiration.length >= 3,
+        cvv: data.paymentInfo.ccCVV.length >= 3 && isNumeric(data.paymentInfo.ccCVV)
     }
 
     function  next(){
@@ -20,8 +20,9 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
     }
 
     function checkValid() {
-        return data.ccNumber.length >= 10 && isNumeric(data.ccNumber) && data.ccExpiration.length >= 3
-            && data.CVV.length >= 3 && isNumeric(data.CVV);
+        return data.paymentInfo.ccNumber.length >= 10 && isNumeric(data.paymentInfo.ccNumber)
+            && data.paymentInfo.ccExpiration.length >= 3
+            && data.paymentInfo.ccCVV.length >= 3 && isNumeric(data.paymentInfo.ccCVV);
     }
 
     function isNumeric(value) {
@@ -58,7 +59,7 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                     Credit Card Number
                                                 </Form.Label>
                                                 <Form.Control name="ccNumber" className="bg-dark text-white"
-                                                              value={data.ccNumber} onChange={handleChange} required
+                                                              value={data.paymentInfo.ccNumber} onChange={handleChange} required
                                                               isValid={validation.cc_number}
                                                               isInvalid={!validation.cc_number}
                                                 />
@@ -71,7 +72,7 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                     Expiration Date (MM/YY)
                                                 </Form.Label>
                                                 <Form.Control name="ccExpiration" className="bg-dark text-white" placeholder="ex: 04/25"
-                                                              value={data.ccExpiration} onChange={handleChange} required
+                                                              value={data.paymentInfo.ccExpiration} onChange={handleChange} required
                                                               isValid={validation.expiration}
                                                               isInvalid={!validation.expiration}
                                                 />
@@ -83,8 +84,8 @@ function PaymentInfoForm({ currentStep, data, handleChange, handleValid, handleP
                                                 <Form.Label className="text-center">
                                                     CVV
                                                 </Form.Label>
-                                                <Form.Control name="CVV" className="bg-dark text-white" placeholder="ex: 123"
-                                                              value={data.CVV} onChange={handleChange} required
+                                                <Form.Control name="ccCVV" className="bg-dark text-white" placeholder="ex: 123"
+                                                              value={data.paymentInfo.ccCVV} onChange={handleChange} required
                                                               isValid={validation.cvv}
                                                               isInvalid={!validation.cvv}
                                                 />
