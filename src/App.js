@@ -5,8 +5,9 @@ import NavigationBar from "./components/NavigationBar";
 import Home from "./components/Home"
 import Footer from "./components/Footer"
 import {Col, Container, Row} from "react-bootstrap";
-import LoginForm from "./components/LoginForm";
-import RegisterFrom from "./components/RegisterForm";
+import LoginForm from "./components/auth/LoginForm";
+import RegisterFrom from "./components/auth/RegisterForm";
+import MyProducts from "./components/MyProducts";
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<LoginForm />} />
                         <Route path="/register" element={<RegisterFrom />} />
+                        <Route path="/user/products" element={<MyProducts />} />
                     </Routes>
                 </Col>
             </Row>

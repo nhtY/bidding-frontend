@@ -1,6 +1,6 @@
 import {Button, Col, Container, ListGroup, Row} from "react-bootstrap";
 import React from "react";
-import ModalMessage from "./ModalMessage";
+import ModalMessage from "../ModalMessage";
 
 
 function ConfirmRegister({currentStep, data, handlePrev, handleRegister, isShow, modalMessage, handleCloseModal}) {

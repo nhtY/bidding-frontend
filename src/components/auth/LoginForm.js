@@ -1,24 +1,26 @@
 import {Form, Container, Row, Col, Card, Button} from 'react-bootstrap';
-import {Link} from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
 import React, {useState} from "react";
-import authService from "../service/authService";
 import LoginErrorMessage from "./LoginErrorMessage";
-import { useHistory } from 'react-router-dom';
+import {authenticateUser} from "../../service/index";
+import {connect} from "react-redux";
 
-function LoginForm() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+
+const initialState = {
+    username: '',
+    password: ''
+}
+
+function LoginForm(props) {
+    const [credentials, setCredentials] = useState(initialState);
     const [errorMessage, setErrorMessage] = useState("");
     const [isShow, setShow] = useState(false);
+    const navigate = useNavigate();
 
     function handleChange(e) {
-        if (e.target.name === "username") {
-            setUsername(e.target.value);
-        }
-
-        if (e.target.name === "password") {
-            setPassword(e.target.value);
-        }
+        setCredentials(
+            { ...credentials, [e.target.name]: e.target.value }
+        );
     }
 
     const handleCloseModal = () => {
@@ -28,22 +30,27 @@ function LoginForm() {
     function submitForm(event) {
         event.preventDefault();
 
-        authService.login(username, password)
-            .then(response => {
-                console.log("Login successful. User ID:", response.userID);
+        props.authenticateUser(credentials.username, credentials.password);
+        setTimeout(() => {
+            if (props.login.isLoggedIn) {
+                navigate("/");
 
-                // Get the history object from react-router-dom
-                const history = useHistory();
-
-                // Navigate to the home page
-                history.push('/');
-            })
-            .catch(error => {
-                console.error("Login failed with status code:", error.status);
-                // Display an error message to the user using a modal or another UI element
+            }else {
                 setShow(true);
                 setErrorMessage("Invalid username or password. Please try again.");
-            });
+            }
+        });
+
+        // authService.login(credentials.username, credentials.password)
+        //     .then(response => {
+        //         console.log("Login successful. User ID:", response.userID);
+        //     })
+        //     .catch(error => {
+        //         console.error("Login failed with status code:", error.status);
+        //         // Display an error message to the user using a modal or another UI element
+        //         setShow(true);
+        //         setErrorMessage("Invalid username or password. Please try again.");
+        //     });
     }
 
     return (
@@ -79,7 +86,8 @@ function LoginForm() {
 
                                             <div className="d-flex justify-content-center">
 
-                                                    <Button className="col-6" variant="success" type="submit">
+                                                    <Button className="col-6" variant="success" type="submit"
+                                                            disabled={credentials.username.length === 0 || credentials.password.length===0}>
                                                         Login
                                                     </Button>
 
@@ -103,4 +111,16 @@ function LoginForm() {
     );
 }
 
-export default LoginForm;
+const mapStateToProps = state => {
+    return {
+        login: state.auth
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        authenticateUser: (username, password) => dispatch(authenticateUser(username, password))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (LoginForm);

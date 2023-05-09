@@ -4,7 +4,7 @@ import UserInfoForm from "./UserInfoForm";
 import AddressInfoForm from "./AddressInfoForm";
 import PaymentInfoForm from "./PaymentInfoForm";
 import ConfirmRegister from "./ConfirmRegister";
-import authService from "../service/authService"
+import authService from "../../service/authService"
 
 function RegisterFrom() {
     const initialData = {
