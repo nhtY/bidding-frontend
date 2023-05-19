@@ -1,23 +1,39 @@
 
 import {Card, Row, Col, Button} from 'react-bootstrap';
 import {Link} from "react-router-dom";
+import {useEffect, useState} from "react";
+import bookService from "../service/bookService";
 
 function ProductCards() {
-    const img_url = "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80";
-    const product_title = "Product Title";
+    const [products, setProducts] = useState([]); // initially empty
+    const [error, setError] = useState({message: '', isError: false});
 
-    return (
-        <Row xs={1} md={3} className="justify-content-md-center">
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
-            {Array.from({ length: 4 }).map((_, idx) => (
+    function fetchProducts() {
+        bookService.fetchAllProducts()
+            .then(response => {
+                console.log("FETCH PRODUCTS ==> ", response)
+                setProducts(response);
+            })
+            .catch(error => {
+                console.log("FETCH PRODUCT ERROR message: ", error.message);
+                setError({...error, ['message']: error.message, ['isError']: true});
+            })
+    }
+
+    const productCards = (
+        <>
+            {products.map((p, idx) => (
                 <Col key={idx}>
                     <Card className="bg-dark text-white m-2 shadow">
-                        <Card.Img variant="top" src={img_url} />
+                        <Card.Img className={''} variant="top" src={p.imgUrl} />
                         <Card.Body>
-                            <Card.Title>{product_title + " " + idx}</Card.Title>
+                            <Card.Title>{p.productName}</Card.Title>
                             <Card.Text>
-                                This card has supporting text below as a natural lead-in to
-                                additional content.{' '}
+                                {p.description}
                             </Card.Text>
                         </Card.Body>
                         <Card.Footer>
@@ -32,6 +48,19 @@ function ProductCards() {
                     </Card>
                 </Col>
             ))}
+        </>
+    );
+
+    const errorComponent = (
+        <div className={'text-danger'}>
+            <h3>{error.message}</h3>
+            <p>Something went wrong while fetching product data...</p>
+        </div>
+    );
+
+    return (
+        <Row xs={1} md={3} className="justify-content-md-center">
+            {error.isError? errorComponent : productCards}
         </Row>
     );
 }

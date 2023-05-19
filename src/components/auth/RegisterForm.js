@@ -49,8 +49,8 @@ function RegisterFrom() {
             const address = { ...data.deliveryAddress, [e.target.name]: e.target.value }
             setData({ ...data, ['deliveryAddress']: address });
         }else if (formNames[currentStep-1] === 'payment') {
-            const address = { ...data.paymentInfo, [e.target.name]: e.target.value }
-            setData({ ...data, ['paymentInfo']: address });
+            const payment = { ...data.paymentInfo, [e.target.name]: e.target.value }
+            setData({ ...data, ['paymentInfo']: payment });
         }else {
             setData({ ...data, [e.target.name]: e.target.value });
         }
