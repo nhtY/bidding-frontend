@@ -32,14 +32,13 @@ function LoginForm(props) {
 
         props.authenticateUser(credentials.username, credentials.password);
         setTimeout(() => {
-            if (props.login.isLoggedIn) {
+            if (props.auth.isLoggedIn) {
                 navigate("/");
-
             }else {
                 setShow(true);
                 setErrorMessage("Invalid username or password. Please try again.");
             }
-        });
+        }, );
 
         // authService.login(credentials.username, credentials.password)
         //     .then(response => {
@@ -113,7 +112,7 @@ function LoginForm(props) {
 
 const mapStateToProps = state => {
     return {
-        login: state.auth
+        auth: state.auth
     }
 }
 

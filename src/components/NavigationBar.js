@@ -3,8 +3,28 @@ import React from "react";
 import {Container, Nav, Navbar} from 'react-bootstrap';
 import {Link} from 'react-router-dom'
 import logo from '../images/icon.jpg'
+import {connect} from "react-redux";
+import {logoutUser} from "./redux-related/authActions";
 
-function NavigationBar() {
+function NavigationBar(props) {
+
+    function logout() {
+        props.logoutUser();
+    }
+
+    const notLoggedInLinks = (
+        <>
+            <Link to={"login"} className="nav-link">Login</Link>
+            <Link to={"register"} className="nav-link">Register</Link>
+        </>
+    );
+
+    const loggedInLinks = (
+        <>
+            <Link to={"logout"} onClick={logout} className="nav-link">Logout</Link>
+        </>
+    );
+
     return (
         <Navbar bg="dark" variant="dark">
             <Container>
@@ -19,8 +39,7 @@ function NavigationBar() {
                         <Link to={"/user/products"} className="nav-link">My Products</Link>
                     </Nav>
                     <Nav className={"navbar-right"}>
-                        <Link to={"login"} className="nav-link">Login</Link>
-                        <Link to={"register"} className="nav-link">Register</Link>
+                        {props.auth.isLoggedIn? loggedInLinks : notLoggedInLinks}
                     </Nav>
                 </Navbar.Collapse>
             </Container>
@@ -28,4 +47,15 @@ function NavigationBar() {
     );
 }
 
-export default NavigationBar;
+const mapStateToProps = state => {
+    return {
+        auth: state.auth
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        logoutUser: () => dispatch(logoutUser())
+    }
+}
+export default connect(mapStateToProps,  mapDispatchToProps)(NavigationBar);
