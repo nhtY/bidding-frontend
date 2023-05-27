@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080/api/auth';
 
+// check for HTTP basic: https://stackoverflow.com/questions/44072750/how-to-send-basic-auth-with-axios
+
 const register = (user) => {
     return axios.post(`${BASE_URL}/register`, user)
         .then(response => {
@@ -26,14 +28,17 @@ const register = (user) => {
 };
 
 function login(username, password) {
+
+    const  basicAuth = 'Basic ' + btoa(username + ':' + password);
+
+    console.log(basicAuth)
+
     return axios.post(`${BASE_URL}/login`, {}, {
-        auth: {
-            username: username,
-            password: password
-        }
-    })
+        headers : {'Authorization' : basicAuth}
+        })
         .then(response => {
             // If login is successful, store the user ID in local storage
+            localStorage.setItem('credentials', JSON.stringify({username: username, password: password}));
             localStorage.setItem('userID', response.data.userID);
             return response.data;
         })
@@ -41,5 +46,6 @@ function login(username, password) {
             throw error.response.data;
         });
 }
+
 
 export default { register, login };

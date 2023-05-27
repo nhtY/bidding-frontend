@@ -25,6 +25,9 @@ function NavigationBar(props) {
         </>
     );
 
+    const loggedIn = props.loggedIn !== false ? true : false;
+    console.log("is logged in: ", props.loggedIn);
+
     return (
         <Navbar bg="dark" variant="dark">
             <Container>
@@ -39,7 +42,7 @@ function NavigationBar(props) {
                         <Link to={"/user/products"} className="nav-link">My Products</Link>
                     </Nav>
                     <Nav className={"navbar-right"}>
-                        {props.auth.isLoggedIn? loggedInLinks : notLoggedInLinks}
+                        {loggedIn? loggedInLinks : notLoggedInLinks}
                     </Nav>
                 </Navbar.Collapse>
             </Container>
@@ -49,7 +52,7 @@ function NavigationBar(props) {
 
 const mapStateToProps = state => {
     return {
-        auth: state.auth
+        loggedIn: state.auth.isLoggedIn
     };
 }
 

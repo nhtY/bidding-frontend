@@ -30,15 +30,19 @@ function LoginForm(props) {
     function submitForm(event) {
         event.preventDefault();
 
-        props.authenticateUser(credentials.username, credentials.password);
+        console.log(props.auth.isLoggedIn);
+
+        props.loginUser(credentials.username, credentials.password);
+        console.log(props.auth.isLoggedIn);
         setTimeout(() => {
+            console.log(props.auth.isLoggedIn);
             if (props.auth.isLoggedIn) {
                 navigate("/");
             }else {
                 setShow(true);
                 setErrorMessage("Invalid username or password. Please try again.");
             }
-        }, );
+        }, 500);
 
         // authService.login(credentials.username, credentials.password)
         //     .then(response => {
@@ -118,8 +122,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        authenticateUser: (username, password) => dispatch(authenticateUser(username, password))
+        loginUser: (username, password) => dispatch(authenticateUser(username, password))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps) (LoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

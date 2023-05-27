@@ -2,10 +2,11 @@
 import {Card, Row, Col, Button} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
-import bookService from "../service/bookService";
+import {connect} from "react-redux";
+import {fetchAllProducts} from '../service/index';
 
-function ProductCards() {
-    const [products, setProducts] = useState([]); // initially empty
+function ProductCards(props) {
+    const [productList, setProducts] = useState([]); // initially empty
     const [error, setError] = useState({message: '', isError: false});
 
     useEffect(() => {
@@ -13,20 +14,30 @@ function ProductCards() {
     }, []);
 
     function fetchProducts() {
-        bookService.fetchAllProducts()
-            .then(response => {
-                console.log("FETCH PRODUCTS ==> ", response)
-                setProducts(response);
-            })
-            .catch(error => {
-                console.log("FETCH PRODUCT ERROR message: ", error.message);
-                setError({...error, ['message']: error.message, ['isError']: true});
-            })
+        props.fetchProductsAtHome();
+        console.log(props.product);
+
+        setTimeout(() => {
+            if(props.product != '') {
+                setProducts(props.product);
+            }
+            console.log(props.product)
+        }, 500);
+
+        // bookService.fetchAllProducts()
+        //     .then(response => {
+        //         console.log("FETCH PRODUCTS ==> ", response)
+        //         setProducts(response);
+        //     })
+        //     .catch(error => {
+        //         console.log("FETCH PRODUCT ERROR message: ", error.message);
+        //         setError({...error, ['message']: error.message, ['isError']: true});
+        //     })
     }
 
     const productCards = (
         <>
-            {products.map((p, idx) => (
+            {productList.map((p, idx) => (
                 <Col key={idx}>
                     <Card className="bg-dark text-white m-2 shadow">
                         <Card.Img className={''} variant="top" src={p.imgUrl} />
@@ -65,4 +76,15 @@ function ProductCards() {
     );
 }
 
-export default ProductCards;
+const mapStateToProps = state => {
+    return {
+        product: state.product.products
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchProductsAtHome: () => dispatch(fetchAllProducts())
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(ProductCards);

@@ -7,12 +7,6 @@ const END_POINT = 'products';
 
 const fetchAllProducts = () => {
 
-    const config = {
-        headers: {
-            "Access-Control-Allow-Origin": "*"
-        }
-    }
-
     return axios.get(`${BASE_URL}${END_POINT}`)
         .then(response => {
             console.log("FETCH PRODUCTS RESPONSE DATA: ", response)

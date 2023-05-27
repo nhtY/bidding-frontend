@@ -1,20 +1,27 @@
 import {LOGIN_REQUEST, FAILURE, SUCCESS, LOGOUT_REQUEST} from './authTypes';
+import authService from "../../service/authService";
 
 export const authenticateUser = (username, password) => {
     return (dispatch) => {
         dispatch(loginRequest());
-        if (username === 'test' && password === 'test') {
-            dispatch(success(true));
-        } else {
-            dispatch(failure());
-        }
+        authService.login(username, password)
+            .then(() => {
+                console.log("LOGIN SUCCESS")
+                dispatch(loginSuccess(true));
+            })
+            .catch(error => {
+                dispatch(loginFailure());
+                console.log(error);
+            });
     }
 };
 
 export const logoutUser = () => {
     return (dispatch) => {
         dispatch(logoutRequest());
-        dispatch(success(false));
+        localStorage.removeItem('credentials');
+        localStorage.removeItem('userID');
+        dispatch(loginSuccess(false)); // islogged in = false
     }
 }
 
@@ -31,14 +38,14 @@ const logoutRequest =  () => {
         type: LOGOUT_REQUEST
     };
 }
-const success = (isLoggedIn) => {
+const loginSuccess = (isLoggedIn) => {
     return {
         type: SUCCESS,
         payload: isLoggedIn
     };
 }
 
-const failure = () => {
+const loginFailure = () => {
     return {
         type: FAILURE,
         payload: false
