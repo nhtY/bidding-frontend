@@ -40,12 +40,18 @@ function login(username, password) {
             // If login is successful, store the user ID in local storage
             localStorage.setItem('credentials', JSON.stringify({username: username, password: password}));
             localStorage.setItem('userID', response.data.userID);
-            return response.data;
+            return response;
         })
         .catch(error => {
-            throw error.response.data;
+            console.log('Login error: ', error);
+            throw error;
         });
 }
 
+function logout() {
+    localStorage.removeItem('credentials');
+    localStorage.removeItem('userID');
+}
 
-export default { register, login };
+
+export default { register, login, logout };

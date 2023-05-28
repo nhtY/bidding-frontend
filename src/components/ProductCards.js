@@ -6,7 +6,6 @@ import { useDispatch, useSelector} from "react-redux";
 import {fetchProducts, selectAllProducts, selectStatus} from "../features/product/productSlice";
 
 function ProductCards() {
-    const [productList, setProducts] = useState([]); // initially empty
     //const [error, setError] = useState({message: '', isError: false});
 
     const dispatch = useDispatch()
@@ -30,7 +29,7 @@ function ProductCards() {
 
     if (productStatus === 'loading') {
         console.log("Spinner loading")
-        content = <Spinner text="Loading..." />
+        content = <Spinner  animation="border" variant="info" role="status" text="Loading..." />
     } else if (productStatus === 'succeeded') {
         console.log('PRODUCTS: ', products)
         content = products.map((p, idx) => (

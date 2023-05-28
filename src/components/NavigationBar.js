@@ -3,13 +3,14 @@ import React from "react";
 import {Container, Nav, Navbar} from 'react-bootstrap';
 import {Link} from 'react-router-dom'
 import logo from '../images/icon.jpg'
-import {connect} from "react-redux";
-import {logoutUser} from "./redux-related/authActions";
+import {useDispatch, useSelector} from "react-redux";
+import {selectIsLoggedIn, userLogout} from "../features/user/userSlice";
 
-function NavigationBar(props) {
-
+function NavigationBar() {
+    const isLoggedIn = useSelector(selectIsLoggedIn);
+    const dispatch = useDispatch();
     function logout() {
-        props.logoutUser();
+       dispatch(userLogout());
     }
 
     const notLoggedInLinks = (
@@ -42,7 +43,7 @@ function NavigationBar(props) {
                         <Link to={"/user/products"} className="nav-link">My Products</Link>
                     </Nav>
                     <Nav className={"navbar-right"}>
-                        {1===1? loggedInLinks : notLoggedInLinks}
+                        {isLoggedIn? loggedInLinks : notLoggedInLinks}
                     </Nav>
                 </Navbar.Collapse>
             </Container>

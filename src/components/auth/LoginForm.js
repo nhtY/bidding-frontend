@@ -2,8 +2,8 @@ import {Form, Container, Row, Col, Card, Button} from 'react-bootstrap';
 import {Link, useNavigate } from "react-router-dom";
 import React, {useState} from "react";
 import LoginErrorMessage from "./LoginErrorMessage";
-import {authenticateUser} from "../../service/index";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {authenticateUser, selectIsLoggedIn, selectLoginStatus} from "../../features/user/userSlice";
 
 
 const initialState = {
@@ -11,11 +11,16 @@ const initialState = {
     password: ''
 }
 
-function LoginForm(props) {
+function LoginForm() {
     const [credentials, setCredentials] = useState(initialState);
     const [errorMessage, setErrorMessage] = useState("");
     const [isShow, setShow] = useState(false);
     const navigate = useNavigate();
+
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector(selectIsLoggedIn);
+    const error = useSelector(state => state.error);
+    const loginStatus = useSelector(selectLoginStatus);
 
     function handleChange(e) {
         setCredentials(
@@ -27,33 +32,34 @@ function LoginForm(props) {
         setErrorMessage("");
         setShow(false);
     };
-    function submitForm(event) {
+    async function submitForm(event) {
         event.preventDefault();
 
-        console.log(props.auth.isLoggedIn);
+        console.log(isLoggedIn);
 
-        props.loginUser(credentials.username, credentials.password);
-        console.log(props.auth.isLoggedIn);
-        setTimeout(() => {
-            console.log(props.auth.isLoggedIn);
-            if (props.auth.isLoggedIn) {
+        if (loginStatus === 'idle' || loginStatus === 'failed') {
+            try {
+                await dispatch(authenticateUser(credentials)).unwrap();
+                console.log(isLoggedIn);
                 navigate("/");
-            }else {
+            } catch (err) {
+                console.error('Failed to login: ', err)
                 setShow(true);
                 setErrorMessage("Invalid username or password. Please try again.");
-            }
-        }, 500);
 
-        // authService.login(credentials.username, credentials.password)
-        //     .then(response => {
-        //         console.log("Login successful. User ID:", response.userID);
-        //     })
-        //     .catch(error => {
-        //         console.error("Login failed with status code:", error.status);
-        //         // Display an error message to the user using a modal or another UI element
+            }
+        }
+
+        // setTimeout(() => {
+        //     console.log(isLoggedIn);
+        //     if (isLoggedIn) {
+        //         navigate("/");
+        //     } else if (loginStatus === 'failed') {
         //         setShow(true);
         //         setErrorMessage("Invalid username or password. Please try again.");
-        //     });
+        //     }
+        // }, 500);
+
     }
 
     return (
@@ -114,16 +120,4 @@ function LoginForm(props) {
     );
 }
 
-const mapStateToProps = state => {
-    return {
-        auth: state.auth
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        loginUser: (username, password) => dispatch(authenticateUser(username, password))
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default LoginForm;
