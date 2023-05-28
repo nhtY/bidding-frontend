@@ -10,7 +10,7 @@ const fetchAllProducts = () => {
     return axios.get(`${BASE_URL}${END_POINT}`)
         .then(response => {
             console.log("FETCH PRODUCTS RESPONSE DATA: ", response)
-            return response.data;
+            return response; //response.data;
         })
         .catch(error => {
             console.log("FETCH PRODUCTS ERROR DATA: ", error.message)

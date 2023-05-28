@@ -25,8 +25,8 @@ function NavigationBar(props) {
         </>
     );
 
-    const loggedIn = props.loggedIn !== false ? true : false;
-    console.log("is logged in: ", props.loggedIn);
+    // const loggedIn = props.loggedIn !== false ? true : false;
+    // console.log("is logged in: ", props.loggedIn);
 
     return (
         <Navbar bg="dark" variant="dark">
@@ -42,7 +42,7 @@ function NavigationBar(props) {
                         <Link to={"/user/products"} className="nav-link">My Products</Link>
                     </Nav>
                     <Nav className={"navbar-right"}>
-                        {loggedIn? loggedInLinks : notLoggedInLinks}
+                        {1===1? loggedInLinks : notLoggedInLinks}
                     </Nav>
                 </Navbar.Collapse>
             </Container>
@@ -50,15 +50,5 @@ function NavigationBar(props) {
     );
 }
 
-const mapStateToProps = state => {
-    return {
-        loggedIn: state.auth.isLoggedIn
-    };
-}
 
-const mapDispatchToProps = dispatch => {
-    return {
-        logoutUser: () => dispatch(logoutUser())
-    }
-}
-export default connect(mapStateToProps,  mapDispatchToProps)(NavigationBar);
+export default NavigationBar;
