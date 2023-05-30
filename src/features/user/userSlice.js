@@ -2,7 +2,7 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import authService from "../../service/authService";
 
 const initialState = {
-    isLoggedIn: false,
+    isLoggedIn: authService.getCredentials() === null? false : true,
     status: 'idle',
     error: null
 };

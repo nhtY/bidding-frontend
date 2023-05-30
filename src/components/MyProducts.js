@@ -1,7 +1,6 @@
 import {
     Badge,
     Button,
-    Card,
     Col,
     Container,
     Image,
@@ -14,8 +13,9 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import {fetchUserProducts, selectAllUserProducts, selectUserProductStatus} from "../features/product/userProductSlice";
 import {useEffect} from "react";
-import {Link} from "react-router-dom";
 import authService from "../service/authService";
+import {Link, Route} from "react-router-dom";
+import Home from "./Home";
 
 function ProductListItem(props) {
     const product = props.product;
@@ -60,6 +60,8 @@ function ProductListItem(props) {
 }
 function MyProducts() {
 
+    const credentials = authService.getCredentials();
+
     const dispatch = useDispatch()
     const error = useSelector(state => {
         return state.error;
@@ -67,9 +69,17 @@ function MyProducts() {
     const products = useSelector(selectAllUserProducts);
     const productStatus = useSelector(selectUserProductStatus);
 
-    const credentials = authService.getCredentials();
-
     useEffect(() => {
+
+        if(credentials===null) { // redirect unauthorized browsing
+            const timeout = setTimeout(() => {
+                // 👇️ redirects to an external URL
+                window.location.replace('http://localhost:3000');
+            }, 2000);
+
+            return () => clearTimeout(timeout);
+        }
+
         console.log(productStatus)
         if (productStatus === 'idle') {
             dispatch(fetchUserProducts(credentials))
