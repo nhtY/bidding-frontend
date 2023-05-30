@@ -40,7 +40,7 @@ function NavigationBar() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Link to={""} className="nav-link">Home</Link>
-                        <Link to={"/user/products"} className="nav-link">My Products</Link>
+                        {isLoggedIn? (<Link to={"/user/products"} className="nav-link">My Products</Link>) : (<></>)}
                     </Nav>
                     <Nav className={"navbar-right"}>
                         {isLoggedIn? loggedInLinks : notLoggedInLinks}

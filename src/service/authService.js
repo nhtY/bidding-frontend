@@ -53,5 +53,9 @@ function logout() {
     localStorage.removeItem('userID');
 }
 
+function getCredentials() {
+    return JSON.parse(localStorage.getItem('credentials'));
+}
 
-export default { register, login, logout };
+
+export default { register, login, logout, getCredentials };
