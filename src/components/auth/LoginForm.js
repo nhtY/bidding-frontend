@@ -19,7 +19,7 @@ function LoginForm() {
 
     const dispatch = useDispatch();
     const isLoggedIn = useSelector(selectIsLoggedIn);
-    const error = useSelector(state => state.error);
+    const error = useSelector(state => state.user.error);
     const loginStatus = useSelector(selectLoginStatus);
 
     function handleChange(e) {
@@ -44,21 +44,19 @@ function LoginForm() {
                 navigate("/");
             } catch (err) {
                 console.error('Failed to login: ', err)
+                let message = '';
+
+                if (err.code === 'ERR_BAD_REQUEST') {
+                    message = "Invalid username or password. Please try again.";
+                }else {
+                    message = err.message;
+                }
+
                 setShow(true);
-                setErrorMessage("Invalid username or password. Please try again.");
+                setErrorMessage(message);
 
             }
         }
-
-        // setTimeout(() => {
-        //     console.log(isLoggedIn);
-        //     if (isLoggedIn) {
-        //         navigate("/");
-        //     } else if (loginStatus === 'failed') {
-        //         setShow(true);
-        //         setErrorMessage("Invalid username or password. Please try again.");
-        //     }
-        // }, 500);
 
     }
 

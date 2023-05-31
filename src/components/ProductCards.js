@@ -13,7 +13,7 @@ function ProductCards() {
         console.log('State: ', state);
         return state.product.productList
     })
-    const error = useSelector(state => state.error)
+    const error = useSelector(state => state.product.error)
     const productStatus = useSelector(selectStatus)
 
     useEffect(() => {
@@ -55,7 +55,20 @@ function ProductCards() {
             </Col>
         ))
     } else if (productStatus === 'failed') {
-        content = <div className={'text-danger'}>{error}</div>
+        console.log("Error loading products");
+        content = (
+            <div className={"justify-content-center text-center"}>
+                <h3 sm={12} className={'text-danger'}>{error}</h3>
+                <p className={'text-danger'}>The products could not loaded. Sorry :(</p>
+                <p className={'text-info text-start'}>
+                    You can:
+                    <ul>
+                        <li>try to refresh the page</li>
+                        <li>check your internet connection</li>
+                    </ul>
+                </p>
+            </div>
+        );
     }
 
 

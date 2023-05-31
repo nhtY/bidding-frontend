@@ -128,7 +128,7 @@ function MyProducts() {
 
     const dispatch = useDispatch()
     const error = useSelector(state => {
-        return state.error;
+        return state.userProduct.error;
     })
     const products = useSelector(selectAllUserProducts);
     const productStatus = useSelector(selectUserProductStatus);
