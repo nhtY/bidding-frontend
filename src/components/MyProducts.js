@@ -2,7 +2,7 @@ import {
     Badge,
     Button,
     Col,
-    Container,
+    Container, Form,
     Image,
     ListGroup,
     ListGroupItem,
@@ -12,18 +12,62 @@ import {
 } from "react-bootstrap";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchUserProducts, selectAllUserProducts, selectUserProductStatus} from "../features/product/userProductSlice";
-import {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import authService from "../service/authService";
-import {Link, Route} from "react-router-dom";
-import Home from "./Home";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faPlus, faFaceSadTear, faTrash } from '@fortawesome/free-solid-svg-icons'
+
+const newProductInitial = {
+    productOwner: "",
+    productName: "",
+    description: "",
+    basePrice: 0,
+    imgUrl: ""
+}
 
 function ProductListItem(props) {
-    const product = props.product;
+    const [product, setProduct] = useState(props.product);
+    const [allowChange, setAllow] = useState(props.allow);
+
+    const [prev, setPrev] = useState(props.product);
+
+    const [basePrice, setPrice] = useState(props.product.basePrice);
+    const [prevPrice, setPrevPrice] = useState(props.product.basePrice);
+
+    useEffect(() => {
+        if(allowChange === true) {
+            setPrev(product);
+            setPrevPrice(basePrice)
+        }else { // cancel update
+            setProduct(prev);
+            setPrice(prevPrice);
+        }
+    },[allowChange]);
+
+    function allowToggle() {
+        // toggle
+        setAllow(!allowChange);
+    }
+    function handleChange(e) {
+        if(e.target.name === 'basePrice'){
+            setPrice(e.target.value);
+        }
+        setProduct(
+            { ...product, [e.target.name]: e.target.value }
+        );
+    }
+
     return (
         <ListGroupItem className={'mb-3 bg-dark text-white border-2 rounded-3 shadow'}>
             <Col>
                 <Row>
-                    <h2>{product.productName}</h2>
+                    <h2>
+                        <Form.Control plaintext={!allowChange} readOnly={!allowChange} name="productName" className="bg-dark text-white"
+                                      onChange={handleChange} disabled={!allowChange}
+                                      value={product.productName}
+                        />
+                    </h2>
+
                 </Row>
                 <Row xs={2} lg={4} >
                     <Col md={6} lg={4} className={'mb-2'}>
@@ -32,24 +76,47 @@ function ProductListItem(props) {
                         </Image>
                     </Col>
                     <Col lg={3} className={'mb-2'}>
-                        {product.description}
+                        {allowChange? (
+                            <Form.Control plaintext={!allowChange} name="description" className="bg-dark text-white"
+                                          onChange={handleChange} as={"textarea"} rows={10}
+                                          value={product.description}
+                            />
+                        ) : (product.description) }
                     </Col>
                     <Col lg={2}>
                         <h4>
-                            Base Price <Badge bg="secondary">{product.basePrice}$</Badge>
+                            Base Price <Badge bg="secondary">
+                            <Form.Control name="basePrice"
+                                          className={"bg-transparent text-white d-inline"}
+                                          onChange={handleChange} readOnly={!allowChange}
+                                          value={basePrice + (!allowChange? '$': '')}
+                            />
+                            </Badge>
                         </h4>
+
                         {product.isSold? (
                             <h4>
                                 Sold Price <Badge bg="success">{product.soldPrice}$</Badge>
                             </h4>
                         ) : (
-                            <Badge bg="warning">Not sold yet</Badge>
+                            <>
+                                <Badge text={"dark"} bg="warning">Not sold yet</Badge>
+                                <FontAwesomeIcon color={"orange"} className={"ms-2"} icon={faFaceSadTear} size={"2xl"} />
+                            </>
                         )}
                     </Col>
-                    <Col lg={3} className={'align-items-end'}>
+                    <Col lg={3} className="d-flex justify-content-end">
                         <Stack gap={4} className="col-md-10 mx-auto col-lg-8">
-                            <Button variant="warning">Update</Button>
-                            <Button variant="outline-danger">Delete</Button>
+                            <Button onClick={allowToggle} variant="warning">{allowChange? "Cancel Update" : "Update"}</Button>
+                            {allowChange? (
+                                <Button variant="outline-primary">OK</Button>
+                            ) : (
+                                <Button variant="outline-danger">
+                                    Delete
+                                    <FontAwesomeIcon color={"white"} className={"ms-3"} icon={faTrash}/>
+                                </Button>
+                            )}
+
                         </Stack>
                     </Col>
                 </Row>
@@ -58,9 +125,12 @@ function ProductListItem(props) {
         </ListGroupItem>
     );
 }
+
 function MyProducts() {
 
     const credentials = authService.getCredentials();
+
+    const [newProduct, setNewProduct] = useState(newProductInitial)
 
     const dispatch = useDispatch()
     const error = useSelector(state => {
@@ -87,6 +157,10 @@ function MyProducts() {
         }
     }, [productStatus, dispatch]);
 
+    function handleAdd() {
+
+    }
+
     let content;
 
     if (productStatus === 'loading') {
@@ -98,7 +172,7 @@ function MyProducts() {
             <div key={idx}>
                 <Row lg={10} className={"bg-body bg-opacity-10 text-white justify-content-center p-3 rounded-1"}>
                     <ListGroup>
-                        <ProductListItem product={p} ></ProductListItem>
+                        <ProductListItem product={p} allow={false} ></ProductListItem>
                     </ListGroup>
                 </Row>
             </div>
@@ -107,9 +181,26 @@ function MyProducts() {
         content = <div className={'text-danger'}>{error}</div>
     }
 
+    let upperContent = credentials === null? (
+        <>
+            <h2>Redirecting home...</h2>
+            <Spinner animation="border" variant="info" role="status" text="Loading..." />
+        </>
+    ) : (
+        <Row className={"m-2 p-1"} sm={1} md={3}>
+            <Col sm={10} md={8}><h2>HERE You can make CRUD operations</h2></Col>
+            <Col className="d-flex justify-content-sm-end">
+                <Button className={"shadow d-flex align-items-center"} variant={"success"} onClick={handleAdd}>
+                    <FontAwesomeIcon color={"orange"} className={"me-2"} icon={faPlus} />
+                    <span>New Product</span>
+                </Button>
+            </Col>
+        </Row>
+    );
+
     return (
         <Container className={'text-white'}>
-            <h2>HERE You can make CRUD operations</h2>
+            {upperContent}
             {content}
         </Container>
     );
