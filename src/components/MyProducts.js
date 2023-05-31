@@ -29,18 +29,14 @@ function ProductListItem(props) {
     const [product, setProduct] = useState(props.product);
     const [allowChange, setAllow] = useState(props.allow);
 
+    // in case update is cancelled before submitting the values..
     const [prev, setPrev] = useState(props.product);
-
-    const [basePrice, setPrice] = useState(props.product.basePrice);
-    const [prevPrice, setPrevPrice] = useState(props.product.basePrice);
 
     useEffect(() => {
         if(allowChange === true) {
             setPrev(product);
-            setPrevPrice(basePrice)
         }else { // cancel update
             setProduct(prev);
-            setPrice(prevPrice);
         }
     },[allowChange]);
 
@@ -48,10 +44,8 @@ function ProductListItem(props) {
         // toggle
         setAllow(!allowChange);
     }
+
     function handleChange(e) {
-        if(e.target.name === 'basePrice'){
-            setPrice(e.target.value);
-        }
         setProduct(
             { ...product, [e.target.name]: e.target.value }
         );
@@ -89,7 +83,7 @@ function ProductListItem(props) {
                             <Form.Control name="basePrice"
                                           className={"bg-transparent text-white d-inline"}
                                           onChange={handleChange} readOnly={!allowChange}
-                                          value={basePrice + (!allowChange? '$': '')}
+                                          value={product.basePrice + (!allowChange? '$': '')}
                             />
                             </Badge>
                         </h4>
