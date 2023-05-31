@@ -1,6 +1,7 @@
 
 
 import axios from 'axios';
+import authService from "./authService";
 
 const BASE_URL = 'http://localhost:8080/api/';
 const END_POINT = 'products';
@@ -47,5 +48,51 @@ const fetchUserProducts = (username, password) => {
         })
 }
 
+const addNewProduct = (product) => {
+    const credentials = authService.getCredentials();
+    const  basicAuth = 'Basic ' + btoa(credentials.username + ':' + credentials.password);
+    console.log(basicAuth);
 
-export default { fetchAllProducts, fetchUserProducts };
+    return axios.post(`${BASE_URL}${END_POINT}` + '/add-product', product,
+        {
+            headers : {'Authorization' : basicAuth}
+        })
+        .then(response => {
+            console.log(`ADDED PRODUCT:\n ${response.data}`);
+            return response;
+        })
+        .catch(error => {
+            console.log('ADD PRODUCT ERROR: ', error);
+            let errorMessage = '';
+
+            errorMessage = error.message; // if error
+
+            throw Error(errorMessage);
+        });
+}
+
+const deleteProduct = (product) => {
+    const credentials = authService.getCredentials();
+    const  basicAuth = 'Basic ' + btoa(credentials.username + ':' + credentials.password);
+    console.log(basicAuth);
+
+    return axios.delete(`${BASE_URL}${END_POINT}/${product.id}`,
+        {
+            headers : {'Authorization' : basicAuth}
+        })
+        .then(response => {
+            console.log(`DELETE response:\n ${response.data}`);
+            return response;
+        })
+        .catch(error => {
+            console.log('DELETE ERROR: ', error);
+            let errorMessage = '';
+
+            errorMessage = error.message; // if error
+
+            throw Error(errorMessage);
+        });
+}
+
+
+export default { fetchAllProducts, fetchUserProducts, addNewProduct, deleteProduct };

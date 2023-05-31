@@ -5,12 +5,15 @@ import {Link} from 'react-router-dom'
 import logo from '../images/icon.jpg'
 import {useDispatch, useSelector} from "react-redux";
 import {selectIsLoggedIn, userLogout} from "../features/user/userSlice";
+import {resetUserProducts} from "../features/product/productSlice";
 
 function NavigationBar() {
     const isLoggedIn = useSelector(selectIsLoggedIn);
     const dispatch = useDispatch();
+
     function logout() {
        dispatch(userLogout());
+       dispatch(resetUserProducts())
     }
 
     const notLoggedInLinks = (
