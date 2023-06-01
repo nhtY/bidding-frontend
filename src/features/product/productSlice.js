@@ -29,7 +29,12 @@ const initialState = {
     updateListsStatus: 'idle',
 
     deleteStatus: 'idle',
-    deleteError: null
+    deleteError: null,
+
+    updateProductStatus: 'idle',
+    updateError: null,
+
+    updateList: 'idle'
 };
 export const productSlice = createSlice({
     name: 'product',
@@ -48,12 +53,12 @@ export const productSlice = createSlice({
            state.userProductStatus = 'idle';
            state.userProductList = [];
         },
-        updateProductLists: (state, action) => {
-            state.userProductList = [action.payload].concat(state.userProductList);
-            state.productList.unshift(action.payload);
-
+        changeProductLists: (state, action) => {
             state.updateListsStatus = 'idle';
-        }
+            state.addProductStatus = 'idle';
+            state.deleteStatus = 'idle';
+            state.updateProductStatus = 'idle';
+        },
     },
     extraReducers(builder) {
         builder
@@ -70,7 +75,7 @@ export const productSlice = createSlice({
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.status = 'failed'
                 state.error = action.error.message
-                console.log('failed');
+                console.log('fetch all failed');
             })
             .addCase(fetchUserProducts.pending, (state, action) => {
                 state.userProductStatus = 'loading'
@@ -85,7 +90,7 @@ export const productSlice = createSlice({
             .addCase(fetchUserProducts.rejected, (state, action) => {
                 state.userProductStatus = 'failed'
                 state.userProductError = action.error.message
-                console.log('failed');
+                console.log('fetch failed');
             })
             .addCase(addProduct.pending, (state, action) => {
                 state.addProductStatus = 'loading'
@@ -95,13 +100,19 @@ export const productSlice = createSlice({
                 state.addProductStatus = 'succeeded'
                 console.log("Product is added successfully")
                 // Trigger update events
+                const newUserProducts = [...state.userProductList, action.payload];
+                state.userProductList = newUserProducts
+
+                const newAllProducts = [...state.productList, action.payload];
+                state.productList = newAllProducts;
+
                 state.updateListsStatus = 'update';
 
             })
             .addCase(addProduct.rejected, (state, action) => {
                 state.addProductStatus = 'failed'
                 state.addError = action.error.message
-                console.log('failed');
+                console.log('add failed');
             })
             .addCase(deleteProduct.pending, (state, action) => {
                 state.deleteStatus = 'deleting'
@@ -110,14 +121,53 @@ export const productSlice = createSlice({
             .addCase(deleteProduct.fulfilled, (state, action) => {
                 state.deleteStatus = 'succeeded'
                 console.log("Product is deleted successfully")
+
+                console.log("payload deleteion: ", action)
                 // Trigger update events
-                state.userProductList = state.userProductList.filter(p => p.id != action.payload.id);
+                const userProductsAfterDeletion = [...state.userProductList.filter(p => p.id != action.payload.id)];
+                state.userProductList = userProductsAfterDeletion;
+
+                const allProductsAfterDelete = [...state.productList.filter(p => p.id != action.payload.id)];
+                state.productList = allProductsAfterDelete;
+
+                console.log(userProductsAfterDeletion)
+
+                state.updateListsStatus = 'update';
 
             })
             .addCase(deleteProduct.rejected, (state, action) => {
                 state.deleteStatus = 'failed';
                 state.deleteError = action.error.message
-                console.log('failed');
+                console.log('delete failed');
+            })
+            .addCase(updateProduct.pending, (state, action) => {
+                state.updateProductStatus = 'updating'
+                console.log('loading');
+            })
+            .addCase(updateProduct.fulfilled, (state, action) => {
+                state.updateProductStatus = 'succeeded'
+                console.log("Product is updated successfully")
+
+                const updated = action.payload;
+                // update list:
+                const allProductsAfterUpdate = [...state.productList.map(p =>
+                    p.id != action.payload.id? p : updated
+                )];
+                state.productList = allProductsAfterUpdate;
+
+                const userProductsAfterUpdate = [...state.userProductList.map(p =>
+                    p.id != action.payload.id? p : updated
+                )];
+
+                state.userProductList = userProductsAfterUpdate;
+
+                state.updateListsStatus = 'update';
+
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
+                state.updateProductStatus = 'failed'
+                state.updatError = action.error.message
+                console.log('update failed');
             })
     }
 });
@@ -133,6 +183,8 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
 
 export const selectAllUserProducts = (state) => state.product.userProductList
 export const selectUserProductStatus = (state) => state.product.userProductStatus;
+
+export const selectUpdateListStatus = (state) => state.product.updateList;
 export const fetchUserProducts = createAsyncThunk('products/fetchUserProducts', async (credentials) => {
     const response = await productService.fetchUserProducts(credentials.username, credentials.password);
     console.log(response.data)
@@ -159,8 +211,20 @@ export const selectDeleteError = (state) => state.product.deleteError;
 export const deleteProduct = createAsyncThunk('products/deleteProduct', async (product) => {
     const response = await productService.deleteProduct(product);
     console.log(response.data)
+    const deletionResponse = {
+        data: response.data,
+        id: product.id
+    }
+    return deletionResponse;
+})
+
+export const selectUpdateProductStatus = (state) => state.product.updateProductStatus;
+export const selectUpdateError = (state) => state.product.updateError;
+export const updateProduct = createAsyncThunk('products/updateProduct', async (product) => {
+    const response = await productService.updateProduct(product);
+    console.log(response.data)
     return response.data
 })
 
 export const { toggleShowForm, handleFormChange, resetFormValues,
-    resetUserProducts, updateProductLists } = productSlice.actions;
+    resetUserProducts, changeProductLists } = productSlice.actions;

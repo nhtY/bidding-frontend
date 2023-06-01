@@ -12,22 +12,23 @@ import {
 } from "react-bootstrap";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    addProduct, deleteProduct,
+    addProduct, changeProductLists, deleteProduct,
     fetchUserProducts,
     handleFormChange,
-    resetFormValues, resetUserProducts,
+    resetFormValues,
     selectAddError,
     selectAddProductStatus,
     selectAllUserProducts, selectDeleteError, selectDeleteStatus,
     selectNewProduct,
-    selectShowForm, selectUpdateStatus,
+    selectShowForm, selectUpdateError, selectUpdateListStatus, selectUpdateProductStatus, selectUpdateStatus,
     selectUserProductStatus,
-    toggleShowForm, updateProductLists
+    toggleShowForm, updateProduct
 } from "../features/product/productSlice";
 import React, {useEffect, useState} from "react";
 import authService from "../service/authService";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faPlus, faFaceSadTear, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {all} from "axios";
 
 
 function NewTemporaryProduct(props) {
@@ -41,13 +42,13 @@ function NewTemporaryProduct(props) {
 
     useEffect(() => {
         if(isUpdate === 'update') {
-            dispatch(updateProductLists(product));
+            dispatch(changeProductLists(product));
             console.log("update works..")
         }
     },[isUpdate])
 
     async function handleAddProduct() {
-        if (status === 'idle' || status === 'failed' || status === 'succeeded') {
+        if (status === 'idle' || status === 'failed') {
             try {
                 await dispatch(addProduct(product)).unwrap();
 
@@ -146,23 +147,41 @@ function NewTemporaryProduct(props) {
 function ProductListItem(props) {
     const [product, setProduct] = useState(props.product);
     const [allowChange, setAllow] = useState(props.allow);
+    const [canShowPrev, setCanShowPrev] = useState(true);
 
+    const isUpdate = useSelector(selectUpdateListStatus);
     const deleteStatus = useSelector(selectDeleteStatus);
     const deleteError = useSelector(selectDeleteError);
     const dispatch = useDispatch();
+
+    const updateProductStatus = useSelector(selectUpdateProductStatus);
+    const updateError = useSelector(selectUpdateError);
 
     // in case update is cancelled before submitting the values..
     const [prev, setPrev] = useState(props.product);
 
     useEffect(() => {
-        if(allowChange === true) {
-            setPrev(product);
-        }else { // cancel update
-            setProduct(prev);
+
+        if(canShowPrev) {
+            if(allowChange === true) {
+                setPrev(product);
+            }else { // cancel update
+                setProduct(prev);
+            }
         }
-    },[allowChange]);
+
+        if(isUpdate === 'update') {
+            dispatch(changeProductLists(product));
+            console.log("Updated version: ", product)
+            console.log("update works..");
+        }
+
+    },[allowChange, isUpdate, canShowPrev]);
 
     function allowToggle() {
+        if(!canShowPrev){
+            setCanShowPrev(true);
+        }
         // toggle
         setAllow(!allowChange);
     }
@@ -174,9 +193,24 @@ function ProductListItem(props) {
     }
 
     async function handleDelete() {
-        if (deleteStatus === 'idle' || deleteStatus === 'succeeded') {
+        if (deleteStatus === 'idle') {
             try {
                 await dispatch(deleteProduct(props.product)).unwrap();
+            }catch (e) {
+                console.log(e);
+            }
+        }
+    }
+
+    async function handleUpdate() {
+        if (updateProductStatus === 'idle') {
+            try {
+                await dispatch(updateProduct(product)).unwrap();
+
+                setCanShowPrev(false);
+                setTimeout(() => {
+                    setAllow(false);
+                }, 200)
             }catch (e) {
                 console.log(e);
             }
@@ -198,8 +232,12 @@ function ProductListItem(props) {
                 <Row xs={2} lg={4} >
                     <Col md={6} lg={4} className={'mb-2'}>
                         <Image fluid={true} rounded={true} src={product.imgUrl}>
-
                         </Image>
+                        {allowChange? (<Form.Control plaintext={!allowChange} readOnly={!allowChange} name="imgUrl"
+                                                     className="bg-dark text-white mt-1"
+                                                     onChange={handleChange} disabled={!allowChange}
+                                                     value={product.imgUrl}
+                        />) : null}
                     </Col>
                     <Col lg={2} className={'mb-2'}>
                         {allowChange? (
@@ -245,7 +283,7 @@ function ProductListItem(props) {
                         <Stack gap={4} className="col-md-10 mx-auto col-lg-8">
                             <Button onClick={allowToggle} variant="warning">{allowChange? "Cancel Update" : "Update"}</Button>
                             {allowChange? (
-                                <Button variant="outline-primary">OK</Button>
+                                <Button onClick={handleUpdate} variant="outline-primary">OK</Button>
                             ) : (
                                 <Button variant="outline-danger" onClick={handleDelete}>
                                     Delete
@@ -275,6 +313,7 @@ function MyProducts() {
     const isUpdate = useSelector(selectUpdateStatus);
     //const product = useSelector(selectNewProduct);
     const isShowForm = useSelector(selectShowForm);
+    const isUpdateList = useSelector(selectUpdateListStatus);
 
     useEffect(() => {
 
@@ -292,7 +331,8 @@ function MyProducts() {
             dispatch(fetchUserProducts(credentials))
         }
 
-    }, [productStatus, dispatch]);
+
+    }, [productStatus, dispatch, isUpdateList]);
 
     function handleShowForm() {
         dispatch(toggleShowForm());

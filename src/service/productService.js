@@ -94,5 +94,27 @@ const deleteProduct = (product) => {
         });
 }
 
+const updateProduct = (product) => {
+    const credentials = authService.getCredentials();
+    const  basicAuth = 'Basic ' + btoa(credentials.username + ':' + credentials.password);
+    console.log(basicAuth);
 
-export default { fetchAllProducts, fetchUserProducts, addNewProduct, deleteProduct };
+    return axios.patch(`${BASE_URL}${END_POINT}/${product.id}`, product,
+        {
+            headers : {'Authorization' : basicAuth}
+        })
+        .then(response => {
+            console.log(`UPDATE response:\n ${response.data}`);
+            return response;
+        })
+        .catch(error => {
+            console.log('UPDATE ERROR: ', error);
+            let errorMessage = '';
+
+            errorMessage = error.message; // if error
+
+            throw Error(errorMessage);
+        });
+}
+
+export default { fetchAllProducts, fetchUserProducts, addNewProduct, deleteProduct, updateProduct };
