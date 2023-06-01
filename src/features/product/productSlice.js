@@ -2,7 +2,8 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import productService from "../../service/productService";
 import authService from "../../service/authService";
 
-const owner = authService.getCredentials().username;
+const credentials = authService.getCredentials();
+const owner = credentials===null? '' : credentials.username;
 
 const newProductInitialState = {
     productOwner: owner,
