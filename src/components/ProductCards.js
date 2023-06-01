@@ -1,5 +1,5 @@
 
-import {Card, Row, Col, Button, Spinner} from 'react-bootstrap';
+import {Card, Row, Col, Button, Spinner, Badge} from 'react-bootstrap';
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import { useDispatch, useSelector} from "react-redux";
@@ -35,17 +35,18 @@ function ProductCards() {
         content = products.map((p, idx) => (
             <Col key={idx}>
                 <Card className="bg-dark text-white m-2 shadow">
-                    <Card.Img className={''} variant="top" src={p.imgUrl} />
+                    <Card.Img variant="top" src={p.imgUrl} />
                     <Card.Body>
                         <Card.Title>{p.productName}</Card.Title>
                         <Card.Text>
                             {p.description}
                         </Card.Text>
                     </Card.Body>
-                    <Card.Footer>
+                    <Card.Footer  className={"bg-gradient"}>
                         <div className={"d-flex justify-content-between"}>
-                            <small className="text-muted">Last updated 3 mins ago</small>
-                            <Link className="col-4" to={"/login"}>
+                            <small className="text-muted me-2">Last updated 3 mins ago</small>
+                            <h3><Badge className={"bg-opacity-75"}>{p.basePrice + ' $'}</Badge></h3>
+                            <Link className="col-4 ms-2" to={"/login"}>
                                 <Button className="container-fluid" variant="outline-success">Bid</Button>
                             </Link>
                         </div>
